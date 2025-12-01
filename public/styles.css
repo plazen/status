@@ -140,7 +140,7 @@ header {
     margin-bottom: 32px;
 }
 
-.services h2 {
+.services > h2 {
     font-size: 1.25rem;
     font-weight: 600;
     margin-bottom: 16px;
@@ -150,7 +150,29 @@ header {
 .services-list {
     display: flex;
     flex-direction: column;
+    gap: 24px;
+}
+
+/* Service Categories */
+.service-category {
+    display: flex;
+    flex-direction: column;
     gap: 12px;
+}
+
+.category-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-left: 4px;
+}
+
+.category-services {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .service-card {
@@ -177,6 +199,14 @@ header {
 .service-name {
     font-weight: 500;
     font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.service-icon {
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
 }
 
 .service-url {

@@ -1,23 +1,74 @@
 // Plazen Status Page Application
 
-// Configuration - Services to monitor
-const SERVICES = [
+// Configuration - Services to monitor organized by category
+const SERVICE_CATEGORIES = [
     {
-        name: 'Plazen Website',
-        url: 'https://www.plazen.org',
-        description: 'Main website'
+        name: 'Core Services',
+        services: [
+            {
+                name: 'Plazen Website',
+                url: 'https://www.plazen.org',
+                description: 'Main website',
+                type: 'website'
+            },
+            {
+                name: 'Plazen App',
+                url: 'https://plazen.org',
+                description: 'Web application',
+                type: 'website'
+            },
+            {
+                name: 'Images API',
+                url: 'https://images.plazen.org',
+                description: 'Image processing service',
+                type: 'website'
+            }
+        ]
     },
     {
-        name: 'Plazen App',
-        url: 'https://plazen.org',
-        description: 'Web application'
+        name: 'API Endpoints',
+        services: [
+            {
+                name: 'Tasks API',
+                url: 'https://plazen.org/api/tasks',
+                description: 'Task management endpoint',
+                type: 'api'
+            },
+            {
+                name: 'Account API',
+                url: 'https://plazen.org/api/account',
+                description: 'User account endpoint',
+                type: 'api'
+            },
+            {
+                name: 'Settings API',
+                url: 'https://plazen.org/api/settings',
+                description: 'User settings endpoint',
+                type: 'api'
+            },
+            {
+                name: 'Notifications API',
+                url: 'https://plazen.org/api/notifications',
+                description: 'Notifications endpoint',
+                type: 'api'
+            }
+        ]
     },
     {
-        name: 'Images API',
-        url: 'https://images.plazen.org',
-        description: 'Image processing service'
+        name: 'Database & Infrastructure',
+        services: [
+            {
+                name: 'Database Connection',
+                url: 'https://plazen.org/api/health',
+                description: 'Database connectivity check',
+                type: 'database'
+            }
+        ]
     }
 ];
+
+// Flatten services for iteration
+const SERVICES = SERVICE_CATEGORIES.flatMap(cat => cat.services);
 
 // State
 let serviceStatuses = [];
@@ -49,21 +100,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 60000);
 });
 
-// Render initial service cards
+// Render initial service cards organized by category
 function renderServices() {
-    servicesListEl.innerHTML = SERVICES.map((service, index) => `
-        <div class="service-card" data-index="${index}">
-            <div class="service-info">
-                <span class="service-name">${service.name}</span>
-                <a class="service-url" href="${service.url}" target="_blank" rel="noopener">${service.url}</a>
-                <span class="response-time" id="response-time-${index}"></span>
-            </div>
-            <div class="service-status checking" id="status-${index}">
-                <span class="service-status-dot"></span>
-                <span>Checking...</span>
+    let serviceIndex = 0;
+    servicesListEl.innerHTML = SERVICE_CATEGORIES.map(category => `
+        <div class="service-category">
+            <h3 class="category-title">${category.name}</h3>
+            <div class="category-services">
+                ${category.services.map(service => {
+                    const index = serviceIndex++;
+                    return `
+                        <div class="service-card" data-index="${index}" data-type="${service.type}">
+                            <div class="service-info">
+                                <span class="service-name">
+                                    ${getServiceIcon(service.type)}
+                                    ${service.name}
+                                </span>
+                                <a class="service-url" href="${service.url}" target="_blank" rel="noopener">${service.url}</a>
+                                <span class="response-time" id="response-time-${index}"></span>
+                            </div>
+                            <div class="service-status checking" id="status-${index}">
+                                <span class="service-status-dot"></span>
+                                <span>Checking...</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
             </div>
         </div>
     `).join('');
+}
+
+// Get icon based on service type
+function getServiceIcon(type) {
+    switch(type) {
+        case 'api':
+            return '<svg class="service-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>';
+        case 'database':
+            return '<svg class="service-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>';
+        default:
+            return '<svg class="service-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+    }
 }
 
 // Check all services
